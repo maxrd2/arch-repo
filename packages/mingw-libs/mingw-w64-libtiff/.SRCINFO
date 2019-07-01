@@ -1,0 +1,19 @@
+pkgbase = mingw-w64-libtiff
+	pkgdesc = Library for manipulation of TIFF images (mingw-w64)
+	pkgver = 4.0.10
+	pkgrel = 1
+	url = http://www.simplesystems.org/libtiff/
+	arch = any
+	license = custom
+	makedepends = mingw-w64-configure
+	depends = mingw-w64-libjpeg-turbo
+	depends = mingw-w64-zlib
+	depends = mingw-w64-xz
+	options = !strip
+	options = staticlibs
+	options = !buildflags
+	source = http://download.osgeo.org/libtiff/tiff-4.0.10.tar.gz
+	sha256sums = 2c52d11ccaf767457db0c46795d9c7d1a8d8f76f68b0b800a3dfe45786b996e4
+
+pkgname = mingw-w64-libtiff
+

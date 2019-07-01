@@ -1,0 +1,6 @@
+libcroco/
+pkg/
+src/
+*.log
+*.tar
+*.xz

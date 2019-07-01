@@ -1,0 +1,7 @@
+libwebp/
+pkg/
+src/
+*.gz
+*.log
+*.tar
+*.xz

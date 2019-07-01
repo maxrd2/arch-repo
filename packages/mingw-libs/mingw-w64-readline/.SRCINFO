@@ -1,0 +1,21 @@
+pkgbase = mingw-w64-readline
+	pkgdesc = GNU readline library (mingw-w64)
+	pkgver = 8.0.000
+	pkgrel = 1
+	url = https://tiswww.case.edu/php/chet/readline/rltop.html
+	arch = any
+	license = GPL
+	makedepends = mingw-w64-configure
+	depends = mingw-w64-crt
+	depends = mingw-w64-pdcurses
+	options = !strip
+	options = staticlibs
+	options = !buildflags
+	source = https://ftp.gnu.org/gnu/readline/readline-8.0.tar.gz
+	source = https://ftp.gnu.org/gnu/readline/readline-8.0.tar.gz.sig
+	validpgpkeys = 7C0135FB088AAF6C66C650B9BB5869F064EA74AB
+	sha256sums = e339f51971478d369f8a053a330a190781acb9864cf4c541060f12078948e461
+	sha256sums = SKIP
+
+pkgname = mingw-w64-readline
+

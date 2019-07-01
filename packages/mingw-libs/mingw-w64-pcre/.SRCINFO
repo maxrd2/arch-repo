@@ -1,0 +1,26 @@
+pkgbase = mingw-w64-pcre
+	pkgdesc = A library that implements Perl 5-style regular expressions (mingw-w64)
+	pkgver = 8.43
+	pkgrel = 1
+	url = http://www.pcre.org/
+	arch = any
+	license = BSD
+	makedepends = mingw-w64-configure
+	makedepends = mingw-w64-readline
+	makedepends = mingw-w64-bzip2
+	makedepends = mingw-w64-zlib
+	depends = mingw-w64-crt
+	optdepends = mingw-w64-readline
+	optdepends = mingw-w64-bzip2
+	optdepends = mingw-w64-zlib
+	options = staticlibs
+	options = !strip
+	options = !buildflags
+	source = ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.43.tar.bz2
+	source = ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.43.tar.bz2.sig
+	validpgpkeys = 45F68D54BBE23FB3039B46E59766E084FB0F43D8
+	sha256sums = 91e762520003013834ac1adb4a938d53b22a216341c061b0cf05603b290faf6b
+	sha256sums = SKIP
+
+pkgname = mingw-w64-pcre
+

@@ -1,0 +1,26 @@
+pkgbase = mingw-w64-postgresql
+	pkgdesc = Sophisticated object-relational DBMS (mingw-w64)
+	pkgver = 11.4
+	pkgrel = 1
+	url = https://www.postgresql.org
+	arch = any
+	license = custom:PostgreSQL
+	makedepends = mingw-w64-configure
+	makedepends = libxml2
+	depends = mingw-w64-gettext
+	depends = mingw-w64-openssl>=1.0.0
+	depends = mingw-w64-libxml2
+	depends = mingw-w64-readline
+	provides = mingw-w64-postgresql-libs
+	conflicts = mingw-w64-postgresql-libs
+	replaces = mingw-w64-postgresql-libs
+	options = staticlibs
+	options = !strip
+	options = !buildflags
+	source = http://ftp.postgresql.org/pub/source/v11.4/postgresql-11.4.tar.bz2
+	source = 0001-Use-.dll.a-as-extension-for-import-libraries.patch
+	sha256sums = 02802ddffd1590805beddd1e464dd28a46a41a5f1e1df04bab4f46663195cc8b
+	sha256sums = 10fdb0beeb4c282f3395bb9cc7b20234d6534067fc0834e781fc5feb264c2b78
+
+pkgname = mingw-w64-postgresql
+

@@ -1,0 +1,27 @@
+pkgbase = mingw-w64-pango
+	pkgdesc = A library for layout and rendering of text (mingw-w64)
+	pkgver = 1.43.0
+	pkgrel = 1
+	url = http://www.pango.org
+	arch = any
+	license = LGPL
+	makedepends = gtk-doc
+	makedepends = gobject-introspection
+	makedepends = mingw-w64-poppler
+	makedepends = mingw-w64-meson
+	makedepends = mingw-w64-wine
+	makedepends = git
+	depends = mingw-w64-harfbuzz
+	depends = mingw-w64-fribidi
+	depends = mingw-w64-fontconfig
+	depends = mingw-w64-freetype2
+	depends = mingw-w64-cairo
+	depends = mingw-w64-libthai
+	options = !strip
+	options = staticlibs
+	options = !buildflags
+	source = git+https://gitlab.gnome.org/GNOME/pango.git#commit=26f1135f374f3ad5eb963dcdf016542fbbda361b
+	sha256sums = SKIP
+
+pkgname = mingw-w64-pango
+

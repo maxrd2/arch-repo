@@ -1,0 +1,17 @@
+pkgbase = mingw-w64-nettle
+	pkgdesc = A low-level cryptographic library (mingw-w64)
+	pkgver = 3.5.1
+	pkgrel = 1
+	url = http://www.lysator.liu.se/~nisse/nettle
+	arch = any
+	license = GPL2
+	makedepends = mingw-w64-configure
+	depends = mingw-w64-gmp
+	options = staticlibs
+	options = !strip
+	options = !buildflags
+	source = http://www.lysator.liu.se/~nisse/archive/nettle-3.5.1.tar.gz
+	sha256sums = 75cca1998761b02e16f2db56da52992aef622bf55a3b45ec538bc2eedadc9419
+
+pkgname = mingw-w64-nettle
+

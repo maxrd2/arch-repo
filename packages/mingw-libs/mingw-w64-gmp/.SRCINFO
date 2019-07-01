@@ -1,0 +1,20 @@
+pkgbase = mingw-w64-gmp
+	pkgdesc = A free library for arbitrary precision arithmetic (mingw-w64)
+	pkgver = 6.1.2
+	pkgrel = 1
+	url = http://gmplib.org
+	arch = any
+	license = LGPL3
+	makedepends = mingw-w64-configure
+	makedepends = wine
+	depends = mingw-w64-crt
+	options = staticlibs
+	options = !strip
+	options = !buildflags
+	source = https://gmplib.org/download/gmp/gmp-6.1.2.tar.xz
+	source = exeext.patch
+	sha256sums = 87b565e89a9a684fe4ebeeddb8399dce2599f9c9049854ca8c0dfbdea0e21912
+	sha256sums = SKIP
+
+pkgname = mingw-w64-gmp
+

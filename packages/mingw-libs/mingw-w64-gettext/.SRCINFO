@@ -1,0 +1,34 @@
+pkgbase = mingw-w64-gettext
+	pkgdesc = GNU internationalization library (mingw-w64)
+	pkgver = 0.19.8.1
+	pkgrel = 3
+	url = http://www.gnu.org/software/gettext/
+	arch = any
+	license = GPL
+	makedepends = gettext
+	makedepends = mingw-w64-configure
+	depends = mingw-w64-termcap
+	depends = mingw-w64-libunistring
+	options = !strip
+	options = !buildflags
+	options = staticlibs
+	source = http://ftp.gnu.org/pub/gnu/gettext/gettext-0.19.8.1.tar.gz
+	source = http://ftp.gnu.org/pub/gnu/gettext/gettext-0.19.8.1.tar.gz.sig
+	source = 05-always-use-libintl-vsnprintf.mingw.patch
+	source = 06-dont-include-ctype-after-gnulibs-wctype.mingw.patch
+	source = 07-fix-asprintf-conflict.mingw.patch
+	source = 08-vs-compatible.patch
+	source = 09-gnulib-fix-underscore-cond.patch
+	source = intl.pc
+	validpgpkeys = 462225C3B46F34879FC8496CD605848ED7E69871
+	md5sums = 97e034cf8ce5ba73a28ff6c3c0638092
+	md5sums = SKIP
+	md5sums = 27852a388b8cf38188dc392c244230ff
+	md5sums = f69747f43f279b8a81286cfe5916b82f
+	md5sums = 3ebccf730ec3377b068027eb2283afb2
+	md5sums = f5b611172ae58f1e4589a8d0c1d53414
+	md5sums = bed0da63d251975a21ca830f2f156766
+	md5sums = b0a123ec7ad1a345d0d712dae986a543
+
+pkgname = mingw-w64-gettext
+
