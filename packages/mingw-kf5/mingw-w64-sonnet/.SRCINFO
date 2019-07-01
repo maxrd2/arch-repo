@@ -1,0 +1,26 @@
+pkgbase = mingw-w64-sonnet
+	pkgdesc = Spelling framework for Qt5 (mingw-w64)
+	pkgver = 5.59.0
+	pkgrel = 1
+	url = https://community.kde.org/Frameworks
+	arch = any
+	groups = mingw-w64-kf5
+	license = LGPL
+	makedepends = mingw-w64-extra-cmake-modules
+	makedepends = mingw-w64-qt5-tools
+	makedepends = mingw-w64-aspell
+	makedepends = mingw-w64-hunspell
+	depends = mingw-w64-qt5-base
+	optdepends = mingw-w64-aspell: spell checking via aspell
+	optdepends = mingw-w64-hunspell: spell checking via hunspell
+	options = staticlibs
+	options = !strip
+	options = !buildflags
+	source = https://download.kde.org/stable/frameworks/5.59/sonnet-5.59.0.tar.xz
+	source = https://download.kde.org/stable/frameworks/5.59/sonnet-5.59.0.tar.xz.sig
+	validpgpkeys = 53E6B47B45CEA3E0D5B7457758D0EE648A48B3BB
+	sha256sums = f30e4d622bed2979bdd140adc6fdd537c3bd7f632f49d9efec7d9789cdcff025
+	sha256sums = SKIP
+
+pkgname = mingw-w64-sonnet
+

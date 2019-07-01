@@ -1,0 +1,24 @@
+pkgbase = mingw-w64-kservice
+	pkgdesc = Advanced plugin and service introspection (mingw-w64)
+	pkgver = 5.45.0
+	pkgrel = 1
+	url = https://community.kde.org/Frameworks
+	arch = any
+	groups = mingw-w64-kf5
+	license = LGPL
+	makedepends = mingw-w64-extra-cmake-modules
+	depends = mingw-w64-kconfig
+	depends = mingw-w64-kcrash
+	depends = mingw-w64-kdbusaddons
+	depends = mingw-w64-ki18n
+	options = staticlibs
+	options = !strip
+	options = !buildflags
+	source = http://download.kde.org/stable/frameworks/5.45/kservice-5.45.0.tar.xz
+	source = http://download.kde.org/stable/frameworks/5.45/kservice-5.45.0.tar.xz.sig
+	validpgpkeys = 53E6B47B45CEA3E0D5B7457758D0EE648A48B3BB
+	sha256sums = 875a0496d2f0d28163e5a9fa6832676162695b9dd8a2232632d8f80d8de42a63
+	sha256sums = SKIP
+
+pkgname = mingw-w64-kservice
+
