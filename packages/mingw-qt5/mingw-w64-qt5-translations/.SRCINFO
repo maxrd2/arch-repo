@@ -1,0 +1,23 @@
+pkgbase = mingw-w64-qt5-translations
+	pkgdesc = A cross-platform application and UI framework (translations, mingw-w64)
+	pkgver = 5.13.0
+	pkgrel = 1
+	url = https://www.qt.io/
+	arch = any
+	groups = mingw-w64-qt5
+	license = GPL3
+	license = LGPL3
+	license = FDL
+	license = custom
+	makedepends = mingw-w64-gcc
+	makedepends = mingw-w64-pkg-config
+	makedepends = mingw-w64-qt5-tools
+	depends = mingw-w64-qt5-base
+	options = !strip
+	options = !buildflags
+	options = staticlibs
+	source = https://download.qt.io/official_releases/qt/5.13/5.13.0/submodules/qttranslations-everywhere-src-5.13.0.tar.xz
+	sha256sums = 2f8fb3b2c62fcf1aacd0b32432b960a83546384688c0ea78514e4cf4f2f94c28
+
+pkgname = mingw-w64-qt5-translations
+

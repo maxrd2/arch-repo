@@ -1,0 +1,56 @@
+From c21f38e09b62405086eb4099f8706a7d5debc0af Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Fri, 2 Jun 2017 17:21:08 +0200
+Subject: [PATCH 2/2] Handle win64 in dumpcpp and
+ MetaObjectGenerator::readClassInfo
+
+See https://bugreports.qt.io/browse/QTBUG-46827
+---
+ src/activeqt/container/qaxbase.cpp | 4 ++++
+ tools/dumpcpp/main.cpp             | 8 ++++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/src/activeqt/container/qaxbase.cpp b/src/activeqt/container/qaxbase.cpp
+index d87217f..43a4ed8 100644
+--- a/src/activeqt/container/qaxbase.cpp
++++ b/src/activeqt/container/qaxbase.cpp
+@@ -2209,6 +2209,10 @@ void MetaObjectGenerator::readClassInfo()
+             const QStringList versions = controls.childGroups();
+             for (const QString &version : versions) {
+                 tlfile = controls.value(QLatin1Char('/') + version + QLatin1String("/0/win32/.")).toString();
++                if(tlfile.isEmpty())
++                {
++                  tlfile = controls.value(QLatin1Char('/') + version + QLatin1String("/0/win64/.")).toString();
++                }
+                 if (!tlfile.isEmpty())
+                     break;
+             }
+diff --git a/tools/dumpcpp/main.cpp b/tools/dumpcpp/main.cpp
+index eb6f70a..d9d1bdf 100644
+--- a/tools/dumpcpp/main.cpp
++++ b/tools/dumpcpp/main.cpp
+@@ -1552,6 +1552,10 @@ int main(int argc, char **argv)
+             typeLib = settings.value(QLatin1Char('/') + codes.at(c) + QLatin1String("/0/win32/.")).toString();
+             if (QFile::exists(typeLib))
+                 break;
++            typeLib = settings.value(QLatin1String("/") + codes.at(c) + QLatin1String("/0/win64/.")).toByteArray();
++            if (QFile::exists(typeLib)) {
++                break;
++            }
+         }
+ 
+         if (!typeLib.isEmpty())
+@@ -1611,6 +1615,10 @@ int main(int argc, char **argv)
+                                      + QLatin1String("/win32/.")).toString();
+             if (QFile::exists(typeLib))
+                 break;
++            typeLib = settings.value(key + QLatin1String("/") + codes.at(c) + QLatin1String("/win64/.")).toByteArray();
++            if (QFile::exists(typeLib)) {
++                break;
++            }
+         }
+     }
+ 
+-- 
+2.22.0
+
