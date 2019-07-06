@@ -38,8 +38,18 @@ release_update() {
 
 asset_exists() {
 	declare -i i=0
+	local pathname="$1"
+	local basename="$(basename "$pathname")"
+	local filesize="$(stat --printf="%s" "$pathname")"
 	for asset_name in "${assets[@]}"; do
-		[[ "$asset_name" = "$1" ]] && return 0
+		if [[ "$asset_name" = "$basename" ]]; then
+			if [[ "$filesize" -ne "$(jq -r '.assets['$i'].size' .github_release)" ]]; then
+				echo -e "Delete '\e[1;31m$asset_name\e[m' - filesize mismatch..."
+				"${curl[@]}" -s -XDELETE "$(jq -r '.assets['$i'].url' .github_release)"
+				return 1
+			fi
+			return 0
+		fi
 		#echo "asset[$i]: '$asset_name' != '$1'"
 		i=i+1
 	done
@@ -56,7 +66,7 @@ assets_sync() {
 		local basename="$(basename "$pathname")"
 		new_assets+=("$basename")
 		
-		asset_exists "$basename" && echo -e "Not uploading '\e[1;32m$basename\e[m' - already exists..." && continue
+		asset_exists "$pathname" && echo -e "Not uploading '\e[1;32m$basename\e[m' - already exists..." && continue
 		
 		local url="$upload_url$(echo "$basename" | sed -e 's!%!%25!g;s! !%20!g;s!:!%3A!g;s!+!%2B!g')"
 		echo -e "Uploading '\e[1;33m$basename\e[m' to '$url'..."
