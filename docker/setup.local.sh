@@ -9,20 +9,16 @@ echo "$_ps" >>/etc/skel/.bashrc
 echo -e "$_ps\nexport VISUAL=/usr/bin/vim\nexport PATH="\$HOME/bin:\$PATH"" >>/etc/bash.bashrc
 groupmod -g 100 users
 useradd -m -d /home/devel -u 1000 -g users -G tty -s /bin/bash devel
-#echo 'devel ALL=(ALL) NOPASSWD: /usr/bin/pacman, /usr/bin/makepkg' >>/etc/sudoers
-echo 'devel ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
+echo 'devel ALL=(ALL) NOPASSWD: /usr/bin/pacman, /usr/bin/makepkg' >>/etc/sudoers
 
 info "Setting up pacman"
-pacman -Sy --noconfirm --noprogressbar pacman-contrib
-# select pacman mirrors
-curl -s 'https://www.archlinux.org/mirrorlist/?country=DE&country=CH&country=GB&country=US&protocol=https&ip_version=4&use_mirror_status=on' \
-	| sed 's|^#||;/^#/ d' | rankmirrors -n 6 - >/etc/pacman.d/mirrorlist
+cat >/etc/pacman.d/mirrorlist <<EOF
+Server = http://192.168.1.5:15678/pacman/\$repo/\$arch
+Server = http://archlinux.iskon.hr/\$repo/os/\$arch
+EOF
 cat >>/etc/pacman.conf <<EOF
 [multilib]
 Include = /etc/pacman.d/mirrorlist
-[maxrd2]
-SigLevel = Optional TrustAll
-Server = https://github.com/maxrd2/arch-repo/releases/download/continuous
 EOF
 pacman-key --init
 pacman-key --populate archlinux
@@ -33,6 +29,17 @@ info "Updating system packages"
 pacman -Su --noconfirm --noprogressbar --needed --quiet \
 	git base-devel python2 wget curl expac yajl vim openssh rsync lzop unzip bash-completion \
 	jq imagemagick icoutils
+
+info "Setting up local repo"
+cat >>/etc/pacman.conf <<EOF
+[maxrd2]
+SigLevel = Optional TrustAll
+Server = file:///home/devel/.repo
+EOF
+mkdir /home/devel/.repo
+tar -czf /home/devel/.repo/maxrd2.db -T /dev/null
+chown devel.users -Rf /home/devel/.repo
+pacman -Sy --noconfirm --noprogressbar --quiet
 
 info "Cleaning up"
 rm -rf \
