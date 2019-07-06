@@ -1,7 +1,7 @@
 pkgname=mingw-w64-ffmpeg-bootstrap
 pkgver=4.1.3
 pkgrel=1
-epoch=1
+# epoch=1
 pkgdesc="Complete solution to record, convert and stream audio and video (mingw-w64) - bootstrap for building libx264"
 arch=('any')
 url="http://ffmpeg.org/"
