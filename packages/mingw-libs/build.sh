@@ -104,4 +104,10 @@ pkg-build mingw-w64-libgcrypt
 pkg-build mingw-w64-libxslt
 pkg-build mingw-w64-ilmbase
 pkg-build mingw-w64-openexr
+pkg-build mingw-w64-gstreamer
+pkg-build mingw-w64-orc
+pkg-build mingw-w64-libvisual
+pkg-build mingw-w64-gst-plugins-base
+# pkg-build mingw-w64-gst-plugins-good
+pkg-build mingw-w64-gst-libav
 pkg-remove mingw-w64-rust-bin # it can't create exe... and we needed it for build only... so remove it
