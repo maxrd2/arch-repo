@@ -44,3 +44,4 @@ pkg-build mingw-w64-kross
 pkg-build mingw-w64-kunitconversion
 pkg-build mingw-w64-python-bin
 pkg-build mingw-w64-threadweaver
+pkg-build mingw-w64-kinit
