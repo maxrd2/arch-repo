@@ -90,6 +90,9 @@ pkg-bootstrap mingw-w64-ffmpeg-bootstrap mingw-w64-ffmpeg
 pkg-build mingw-w64-x264
 pkg-build mingw-w64-x265
 pkg-build mingw-w64-ffmpeg mingw-w64-ffmpeg-bootstrap
+pkg-remove mingw-w64-rust-bin # it can't create exe... and we needed it for build only... so remove it
+
+# Qt5 / KF5 dependencies
 pkg-build mingw-w64-sqlite
 pkg-build mingw-w64-dbus
 pkg-build mingw-w64-pcre2
@@ -104,10 +107,16 @@ pkg-build mingw-w64-libgcrypt
 pkg-build mingw-w64-libxslt
 pkg-build mingw-w64-ilmbase
 pkg-build mingw-w64-openexr
+
+# GStreamer and dependencies
 pkg-build mingw-w64-gstreamer
 pkg-build mingw-w64-orc
 pkg-build mingw-w64-libvisual
 pkg-build mingw-w64-gst-plugins-base
-# pkg-build mingw-w64-gst-plugins-good
 pkg-build mingw-w64-gst-libav
-pkg-remove mingw-w64-rust-bin # it can't create exe... and we needed it for build only... so remove it
+pkg-build mingw-w64-glib-networking
+pkg-build mingw-w64-libsoup
+pkg-build mingw-w64-flac
+pkg-build mingw-w64-wavpack
+pkg-build mingw-w64-mpg123
+pkg-build mingw-w64-gst-plugins-good
