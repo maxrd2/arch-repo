@@ -1,106 +1,77 @@
-# Maintainer: Alexey Pavlov <alexpux@gmail.com>
-# Contributor: James Ross-Gowan <rossymiles@gmail.com>
-
-_realname=mpv
-pkgbase="mingw-w64-${_realname}"
-pkgname="mingw-w64-${_realname}"
+_pkgname=mpv
+pkgname="mingw-w64-${_pkgname}"
 pkgver=0.29.1
-pkgrel=2
+pkgrel=1
 pkgdesc="Video player based on MPlayer/mplayer2 (mingw-w64)"
 url="https://mpv.io/"
 arch=('any')
 license=('GPL')
 depends=("mingw-w64-ffmpeg"
          "mingw-w64-lcms2"
-         "mingw-w64-libarchive"
          "mingw-w64-libass"
          "mingw-w64-libbluray"
-         "mingw-w64-libcaca"
-         "mingw-w64-libcdio"
-         "mingw-w64-libcdio-paranoia"
-         "mingw-w64-libdvdnav"
-         "mingw-w64-libdvdread"
          "mingw-w64-libjpeg-turbo"
-         "mingw-w64-lua51"
-         "mingw-w64-rubberband"
-         "mingw-w64-uchardet"
-         "mingw-w64-vapoursynth"
-         "mingw-w64-vulkan"
-         "winpty")
+         "mingw-w64-shaderc"
+         "mingw-w64-crossc")
 makedepends=("mingw-w64-gcc"
-             "mingw-w64-python3-docutils"
              "perl"
-             "pkg-config"
+             "mingw-w64-pkg-config"
              "python")
-source=(${_realname}-${pkgver}.tar.gz::https://github.com/mpv-player/${_realname}/archive/v${pkgver}.tar.gz
-        001-ffmpeg-abi.patch)
-sha256sums=('f9f9d461d1990f9728660b4ccb0e8cb5dce29ccaa6af567bec481b79291ca623'
-            '2bb58abf76d4d99b2e2e0b66b66af115ef9fbc5bb02e94b5e2a41a00910e06c2')
+options=(staticlibs !strip !buildflags)
+source=(${_pkgname}-${pkgver}.tar.gz::https://github.com/mpv-player/${_pkgname}/archive/v${pkgver}.tar.gz)
+sha256sums=('f9f9d461d1990f9728660b4ccb0e8cb5dce29ccaa6af567bec481b79291ca623')
 
-# strip doesn't work well with the mpv.com wrapper, so strip manually instead
-options=(!strip !emptydirs)
+_architectures="i686-w64-mingw32 x86_64-w64-mingw32"
 
 prepare() {
-  cd ${_realname}-${pkgver}
-#   patch -p1 -i ${srcdir}/001-ffmpeg-abi.patch
-
+  pushd ${_pkgname}-${pkgver}
   [[ -x ./waf ]] || /usr/bin/python3 ./bootstrap.py
-  sed -i 's:bin/env python$:bin/env python3:' waf
+  popd
+
+  for _arch in ${_architectures}; do
+    cp -rf "${_pkgname}-${pkgver}" "build-${_arch}"
+  done
+  rm -rf "${_pkgname}-${pkgver}"
 }
 
 build() {
-  cd "${srcdir}/${_realname}-${pkgver}"
-
-  DEST_OS=win32 \
-  TARGET=${MINGW_CHOST} \
-  PKG_CONFIG=/usr/bin/pkg-config \
-  CC=gcc PERL=/usr/bin/perl \
-  AR=${MINGW_PREFIX}/bin/ar \
-  WINDRES=${MINGW_PREFIX}/bin/windres \
-  RST2MAN=${MINGW_PREFIX}/bin/rst2man3 \
-  /usr/bin/python3 ./waf configure \
-    --prefix=${MINGW_PREFIX} \
-    --check-c-compiler=gcc \
-    --enable-libmpv-shared \
-    --enable-caca \
-    --enable-cdda \
-    --enable-dvdnav \
-    --enable-dvdread \
-    --disable-egl-angle \
-    --disable-egl-angle-lib \
-    --enable-jpeg \
-    --enable-lcms2 \
-    --enable-libarchive \
-    --enable-libass \
-    --enable-libbluray \
-    --enable-lua \
-    --enable-rubberband \
-    --enable-uchardet \
-    --enable-vapoursynth \
-    --out="${srcdir}/build-${MINGW_CHOST}"
-
-  /usr/bin/python3 ./waf build
+  cd "${srcdir}/"
+  for _arch in ${_architectures}; do
+    pushd build-${_arch}
+    DEST_OS=win32 \
+    TARGET=${_arch} \
+    PKG_CONFIG=/usr/bin/${_arch}-pkg-config \
+    CC=/usr/bin/${_arch}-gcc \
+    PERL=/usr/bin/perl \
+    AR=/usr/bin/${_arch}-ar \
+    WINDRES=/usr/bin/${_arch}-windres \
+    ./waf configure \
+      --prefix=/usr/$_arch \
+      --check-c-compiler=gcc \
+      --enable-libmpv-shared \
+      --disable-egl-angle \
+      --disable-egl-angle-lib
+    ./waf build
+    popd
+  done
 }
 
 package() {
-  cd "${srcdir}/${_realname}-${pkgver}"
-  export PYTHON=${MINGW_PREFIX}/bin/python3
-  /usr/bin/python3 ./waf install --destdir="${pkgdir}"
+  cd "${srcdir}"
+  for _arch in ${_architectures}; do
+    pushd build-${_arch}
 
-  # Strip binaries manually
-  ${MINGW_PREFIX}/bin/strip "${STRIP_BINARIES}" "${pkgdir}${MINGW_PREFIX}/bin/mpv.exe"
-  ${MINGW_PREFIX}/bin/strip "${STRIP_BINARIES}" "${pkgdir}${MINGW_PREFIX}/bin/mpv.com"
-  ${MINGW_PREFIX}/bin/strip "${STRIP_SHARED}" "${pkgdir}${MINGW_PREFIX}/bin/mpv-1.dll"
+    export PYTHON=/usr/$_arch/bin/python
+    ./waf install --destdir="${pkgdir}"
 
-  # Move encoding-profiles.conf to share/doc alongside the example .conf files.
-  # mpv doesn't search /etc for configuration on MinGW.
-  mv "${pkgdir}${MINGW_PREFIX}/etc/mpv/"*.conf "${pkgdir}${MINGW_PREFIX}/share/doc/mpv/"
+    find "$pkgdir/usr/${_arch}" -name '*.exe' -exec ${_arch}-strip {} \;
+    find "$pkgdir/usr/${_arch}" -name '*.dll' -exec ${_arch}-strip --strip-unneeded {} \;
+    find "$pkgdir/usr/${_arch}" -name '*.a' -o -name '*.dll' | xargs ${_arch}-strip -g
 
-  # mpv needs winpty for key bindings to work on the terminal
-  mv "${pkgdir}${MINGW_PREFIX}/bin/mpv.exe" "${pkgdir}${MINGW_PREFIX}/bin/mpv_exe"
-  _exename=mpv
-  echo '#!/usr/bin/env bash' > "${pkgdir}${MINGW_PREFIX}/bin/${_exename}"
-  echo 'export _started_from_console=yes' >> "${pkgdir}${MINGW_PREFIX}/bin/${_exename}"
-  echo '/usr/bin/winpty "$( dirname ${BASH_SOURCE[0]} )/'${_exename}'.exe" "$@"' >> "${pkgdir}${MINGW_PREFIX}/bin/${_exename}"
-  mv "${pkgdir}${MINGW_PREFIX}/bin/mpv_exe" "${pkgdir}${MINGW_PREFIX}/bin/mpv.exe"
+    # Move encoding-profiles.conf to share/doc alongside the example .conf files.
+    # mpv doesn't search /etc for configuration on MinGW.
+    mv "${pkgdir}/usr/$_arch/etc/mpv/"*.conf "${pkgdir}/usr/$_arch/share/doc/mpv/"
+
+    popd
+  done
 }

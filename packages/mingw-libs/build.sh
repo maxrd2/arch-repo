@@ -120,3 +120,10 @@ pkg-build mingw-w64-flac
 pkg-build mingw-w64-wavpack
 pkg-build mingw-w64-mpg123
 pkg-build mingw-w64-gst-plugins-good
+
+# mpv and libmpv
+pkg-build mingw-w64-spirv-tools
+pkg-build mingw-w64-glslang
+pkg-build mingw-w64-shaderc
+pkg-build mingw-w64-crossc
+pkg-build mingw-w64-mpv
