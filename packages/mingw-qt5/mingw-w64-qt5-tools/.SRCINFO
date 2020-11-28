@@ -1,6 +1,6 @@
 pkgbase = mingw-w64-qt5-tools
 	pkgdesc = A cross-platform application and UI framework (Development Tools, QtHelp; mingw-w64)
-	pkgver = 5.13.0
+	pkgver = 5.15.2
 	pkgrel = 1
 	url = https://www.qt.io/
 	arch = i686
@@ -15,16 +15,14 @@ pkgbase = mingw-w64-qt5-tools
 	makedepends = mingw-w64-postgresql
 	makedepends = mingw-w64-mariadb-connector-c
 	makedepends = mingw-w64-vulkan-headers
-	makedepends = mingw-w64-qt5-base-static
 	depends = mingw-w64-qt5-declarative
-	optdepends = mingw-w64-qt5-base-static: use of static libraries
 	options = !strip
 	options = !buildflags
 	options = staticlibs
-	source = https://download.qt.io/official_releases/qt/5.13/5.13.0/submodules/qttools-everywhere-src-5.13.0.tar.xz
+	source = https://download.qt.io/official_releases/qt/5.15/5.15.2/submodules/qttools-everywhere-src-5.15.2.tar.xz
 	source = 0001-Fix-linguist-macro.patch
-	sha256sums = a7887a618dc6434c2567521990c2a7ca72ca6a8379c1d93c5aa6c1798d7a0819
-	sha256sums = 49dfa10ed824ea1885f56ff999bd5cda8e88fc32c16d5646b2bd62fd4ff9ad2f
+	sha256sums = c189d0ce1ff7c739db9a3ace52ac3e24cb8fd6dbf234e49f075249b38f43c1cc
+	sha256sums = e2ce8a553c78fd0dc6934be7d58a9bb90fe465619ac20a567d579c4c90bc01ab
 
 pkgname = mingw-w64-qt5-tools
 

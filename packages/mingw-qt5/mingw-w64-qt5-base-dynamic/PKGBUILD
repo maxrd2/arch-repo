@@ -6,54 +6,40 @@
 # BEFORE COMMENTING OR REPORING ISSUES, PLEASE READ THE FILE `README.md` IN THIS REPOSITORY.
 # ALSO HAVE A LOOK AT THE COMMENTS IN THE AUR.
 
+# DOES NOT WORK YET, see comment in build() function
+
 # All my PKGBUILDs are managed at https://github.com/Martchus/PKGBUILDs where
 # you also find the URL of a binary repository.
 
+# This file is created from PKGBUILD.sh.ep contained by the mentioned repository.
+# Do not edit it manually! See README.md in the repository's root directory
+# for more information.
+
 # All patches are managed at https://github.com/Martchus/qtbase
 
-# define helper functions for the split builds
-isDefault() {
-  [[ $pkgname = 'mingw-w64-qt5-base' ]] || [[ $pkgname = 'mingw-w64-qt5-base-static' ]]
-}
-isStatic() {
-  [ "${pkgname##*-}" = 'static' ]
-}
-isOpenGL() {
-  isDefault || [[ $pkgname = 'mingw-w64-qt5-base-opengl' ]] || [[ $pkgname = 'mingw-w64-qt5-base-opengl-static' ]]
-}
-isANGLE() {
-  [[ $pkgname = 'mingw-w64-qt5-base-angle' ]] || [[ $pkgname = 'mingw-w64-qt5-base-angle-static' ]]
-}
-isDynamic() {
-  [[ $pkgname = 'mingw-w64-qt5-base-dynamic' ]] || [[ $pkgname = 'mingw-w64-qt5-base-dynamic-static' ]]
-}
-isNoOpenGL() {
-  [[ $pkgname = 'mingw-w64-qt5-base-noopengl' ]] || [[ $pkgname = 'mingw-w64-qt5-base-noopengl-static' ]]
-}
-
+_qt_module=qtbase
 pkgname=mingw-w64-qt5-base-dynamic
-pkgver=5.13.0
+pkgver=5.15.1
 pkgrel=1
-pkgdesc='A cross-platform application and UI framework (mingw-w64)'
-# The static variant doesn't contain any executables which need to be executed on the build machine
-isStatic && arch=('any') || arch=('i686' 'x86_64')
+pkgdesc='A cross-platform application and UI framework, dynamic OpenGL backend (mingw-w64)'
+arch=('i686' 'x86_64')
 url='https://www.qt.io/'
 license=('GPL3' 'LGPL3' 'FDL' 'custom')
 depends=('mingw-w64-crt' 'mingw-w64-zlib' 'mingw-w64-libjpeg-turbo' 'mingw-w64-sqlite'
          'mingw-w64-libpng' 'mingw-w64-openssl' 'mingw-w64-dbus' 'mingw-w64-harfbuzz'
          'mingw-w64-pcre2')
-groups=('mingw-w64-qt5')
 optdepends=('mingw-w64-mesa: use LLVMpipe software rasterizer for Qt Quick'
             'mingw-w64-postgresql: PostgreSQL support'
             'mingw-w64-mariadb-connector-c: MySQL support')
 makedepends=('mingw-w64-gcc' 'mingw-w64-postgresql' 'mingw-w64-mariadb-connector-c'
-             'mingw-w64-pkg-config' 'mingw-w64-vulkan-headers')
-# for running fxc
-#if isANGLE || isDynamic; then
-#    makedepends+=('mingw-w64-wine')
-#fi
+             'mingw-w64-vulkan-headers' 'mingw-w64-pkg-config' 'mingw-w64-environment')
+# makedepends+=('mingw-w64-wine') # the dynamic/ANGLE version needs to run fxc.exe (not implemented yet)
+groups=('mingw-w64-qt5')
+provides+=('mingw-w64-qt5-base')
+conflicts+=('mingw-w64-qt5-base' 'mingw-w64-qt5-base-angle' 'mingw-w64-qt5-base-noopengl'
+            'mingw-w64-qt5-base-dynamic' 'mingw-w64-qt5-base-openql')
 options=('!strip' '!buildflags' 'staticlibs' '!emptydirs')
-_pkgfqn="qtbase-everywhere-src-${pkgver}"
+_pkgfqn="${_qt_module}-everywhere-src-${pkgver}"
 source=("https://download.qt.io/official_releases/qt/${pkgver%.*}/${pkgver}/submodules/${_pkgfqn}.tar.xz"
         '0001-Adjust-win32-g-profile-for-cross-compilation-with-mi.patch'
         '0002-Ensure-GLdouble-is-defined-when-using-dynamic-OpenGL.patch'
@@ -70,74 +56,56 @@ source=("https://download.qt.io/official_releases/qt/${pkgver%.*}/${pkgver}/subm
         '0013-Fix-linking-against-shared-static-MariaDB.patch'
         '0014-Fix-linking-against-shared-static-PostgreSQL.patch'
         '0015-Rename-qtmain-to-qt5main.patch'
-        '0016-Build-dynamic-host-libraries.patch'
-        '0017-Enable-rpath-for-build-tools.patch'
-        '0018-Use-system-zlib-for-build-tools.patch'
+        '0016-Enable-rpath-for-build-tools.patch'
+        '0017-Use-system-zlib-for-build-tools.patch'
+        '0018-Merge-shared-and-static-library-trees.patch'
         '0019-Use-.dll.a-as-import-lib-extension.patch'
-        '0020-Merge-shared-and-static-library-trees.patch'
-        '0021-Pull-dependencies-of-static-libraries-in-CMake-modul.patch'
-        '0022-Allow-usage-of-static-version-with-CMake.patch'
-        '0023-Adjust-linker-flags-for-static-build-with-cmake-ming.patch'
-        '0024-Use-correct-pkg-config-static-flag.patch'
-        '0025-Fix-macro-invoking-moc-rcc-and-uic.patch'
-        '0026-Ignore-errors-about-missing-feature-static.patch'
-        '0027-Enable-and-fix-use-of-iconv.patch'
-        '0028-Ignore-failing-pkg-config-test.patch'
-        '0029-Prevent-qmake-from-messing-static-lib-dependencies.patch'
-        '0030-Hardcode-linker-flags-for-platform-plugins.patch'
-        '0031-Fix-linking-against-static-plugins-with-qmake.patch'
-        '0032-Disable-hardware-randomizer-for-32-bit.patch'
-        '0033-Prevent-static-build-to-prefer-dynamic-libraries.patch')
-sha256sums=('ff6964b3b528cd3b1d21bcf3470006e8e5cbe69591923f982871d886ea0488fe'
-            '2df58c3c5350a7b52ed9a19b23359e8a33644012bd529fd31a42afca08a7de33'
-            '58473061f71f210a8344581cd5654bb6e9625cad90e63cf1f9dca063d14f187b'
-            '161e3e3dec7904a889bfe90bd707c00f8e2f471cde0ba7803ebd7997fc84878c'
-            '11b0bbb41bf8f502932f0d8d79e8470654b6adeaaec63de247d044c695e455b8'
-            '556c1b413d079e6f86974a576f3052645fd5919003fe38056f38a66146cc8c6d'
-            'f59764fa27a9d17f4651f7745416d30570d68b11813f4bc132506213a859e0c0'
-            'c9e4f335c8d0cf53f4ecff9b6642d34d4794b9fbd75a2fe7f4219f908e998b43'
-            'c11a3f2354a8c0b8e12890e09c321ac486c29f32a2702c3d123cd51b49f8152e'
-            'cdd71e7ea046327502872da3657132f276159f7377626a41b1a592a8aa2a435f'
-            '002780bf246a151763fb970234bffc9bb6f82a5e6b3c99641c455a650fad9cd6'
-            'e6b535f1959a1cc5b27aefd3b69f05393d0631bd384c946da278e61f1bce6da9'
-            '56b4695cd46189d297f8583f5d130ef2ed2a91f96ccef76d4d70b59a52da1a6e'
-            '1f55fbf4a5d3dfbe7a2a3f282f0e393e8c88a5b982c694cdaf557aa5508d4be8'
-            '39b0c2de05cf7f51a513fe555520d80cc8a22119c4e3b245459ee486f88d902b'
-            '9a0714b960e82e723828bd18c0bd3a722f58eacb058960aed2e9fcbe4b8d2537'
-            '53222828ba96831c3f1f7aeb286ad7911787d832e86fb7d80ee0b041b3ac307a'
-            '9dc29f85390371c29a8e48608056710a7969c1ef793e4ae20f9c5d3aeb57b60f'
-            'ce95915c1bda1c913a7e4a87481387cfe94eb60f5e42daa60c86982a945f5814'
-            'e6424d4354f0d459057dfd0b4239860c3507269497e5360244a0e4aae662fdac'
-            'c8ef24cae77e1a0dcb20caf41c53746e8a25791d6d4cb6433c29644ddcf91a82'
-            '33320bebe4320528dc9857c84f3de00182e5f95912423ff1f1a8a246a5e53de7'
-            'bafd944b5e6b1b83a96a600edc584f5966862b94293f1fb6c4dc5c1de5913357'
-            '437cba1f13db02ee5dcacd1bf18c683062966c3e3a6902f5374ba0afbd9fbea6'
-            '651b44f5ec594fa6cf6394b0bda2b32173505a7ef5ae71f49a4e6684b5d8a621'
-            '24ddc6fba6839625ed2ef7e93e1fc32a566d1113f3f05b6704f3b376b66fa33e'
-            '234ddf01072988172f373b0f446320c223b4b6e6df77b0c84e9932d7389ae800'
-            'c9bb2d2939f9304586d1b97114dbef2ee467eb2a27e7d14571285ad76507c53f'
-            '6538973e82566189c729b70a09a9778e004463fd567c940e760549964ce36c9a'
-            '2b5f7a01d7c65ea9d3c4b41b2fd4cf1816d5a42755be4e8ddd74444e6b193b92'
-            'c649c0f8b7173f101ece01bcc5ae43cb87577c05a82145f4329591ef22301100'
-            '7f27659a4cfd619d9a76238d6b82cafa506fe1186f10f4a6a6865818a6122177'
-            'd7095da9ed7d2807d1b4880decfdbee9f4e36e2ab4855d9258f32961835203c8'
-            '12f6e96911bdff51f44fa1bfcd71a41641fffcc662d3181fbe06e1ccdff24e56')
+        '0020-Pull-dependencies-of-static-libraries-in-CMake-modul.patch'
+        '0021-Allow-usage-of-static-version-with-CMake.patch'
+        '0022-Adjust-linker-flags-for-static-build-with-cmake-ming.patch'
+        '0023-Use-correct-pkg-config-static-flag.patch'
+        '0024-Fix-macro-invoking-moc-rcc-and-uic.patch'
+        '0025-Ignore-errors-about-missing-feature-static.patch'
+        '0026-Enable-and-fix-use-of-iconv.patch'
+        '0027-Ignore-failing-pkg-config-test.patch'
+        '0028-Prevent-qmake-from-messing-static-lib-dependencies.patch'
+        '0029-Hardcode-linker-flags-for-platform-plugins.patch'
+        '0030-Fix-linking-against-static-plugins-with-qmake.patch'
+        '0031-Prevent-Cannot-find-feature-windows_vulkan_sdk.patch')
+sha256sums=('48b9e79220941665a9dd827548c6428f7aa3052ccba8f4f7e039a94aa1d2b28a'
+            'fec4ca039859f9cc9685b34a7bd2da9e0fe24b5b1f85d7cd12665631fa797b44'
+            'a0ea35e6eef4fed06360efa05e11b898f6033d893e1f1657a240cc03e43f076e'
+            'cda13b2856fafe92b1369d6f2d01bd4d9bbdb0ec96c25e91e48ba25267c74c6c'
+            'e13cd18ad781512862b5d288a53ebd09dc0e8bcc6fd3c4e833d0c593f28edd3a'
+            '273af9db2954c1d62e29d2a8328bbfa918bae617456aff6645df4bfb72796e0d'
+            '84a801d904fe308a56a9112af9aa73656eacf36ed7684449363281bfe4108543'
+            '190795aa778ae4e7bd8a74ce56504c697435129b73d2f0418511a4a230f68bc5'
+            '3fff6151dcf76bed12864dba51e4d04d39f8b3969c502a71ed547b527b310d7a'
+            '56240f509157a04ba1f1a23b0e058c2212d66e34aca68a688c15f5d8804bf174'
+            '02ca3a112f3e35749c141ed9c7e87a1fd0e82aa852541024b85f40a99d24d9fc'
+            '3b4dcce669d359953603257e621e6ebc30fb88f0f1c48b35ec443c574f2b05e8'
+            'ba302124391aea5438e82195dd276edd8942f04cff7c6b85a9f0a5279749566b'
+            '68b5f9e0535c8d030161e67a0e8ee8bec2a80a9c8f69c09a4ad25fe98eb9dfd2'
+            'ab46b53eb6272185a05d11820317db421be6e4440166967911e7d59d4f0a03d4'
+            'c11a14a02e48e39e8212097915aed2347825a33022d367f322e34f3aaaf33f90'
+            '6d7c8fd7a162174355dd12399bd8f47f470557751dc117271c02e2e7b385d424'
+            '3c28f5658e0f960091c1991586167ee06bcecd8d843123fbf37ab78a1f5f30f0'
+            'f9545474bd73be049dbf84fc2ff455e924e6fb29bb807809c384bf56a0227ad6'
+            '2998069e3a427c940f496d75df4cea05acb10d3e82c333a5c957e37f0543a0e8'
+            'a301ddcd46b9b2fb58d592af88ac6acf81b2dbd328fb8c4c3ef49abffe343267'
+            '3d1257390ff151365d7fa29cde5f9c118310fe727243fb6f50ad30ab117c3384'
+            '19534087d5fc4b434859d68476ebd0647fdc04bf78f24943b7ab88cccf09b08a'
+            '5a57c66303d4a898dd5cccd9c639f367b50b508256fdf9c00ba5179bb00d701c'
+            '84b9e41b7320834a73edf1d192e511801feb51cd2de60ecc28e46982cd572df4'
+            '85bba2428090518dca878ca117299b065913f125c00cede57b31d37a02d0b787'
+            'f0429a442805c2e0181e8b3b7814259586fdcba000bf324c0e367858c351f6b1'
+            'c8479468cfb4a70fe65a1317f3fbacd40dcdc7a8bafc88648160509ee8b216e8'
+            'a2eb9e683b12efe7fbb365749bdd5373e0fbf6438fe5342effab93f3a262d808'
+            '4c097460c443ec0ca47a41ea1ad6fdaa08e394b7a883d54da69bf9557ccbea31'
+            'e1f2b8bfe9f3cdacceb6d9b73573ad39ea73ac0fce74448c7df0262b34b703bb'
+            '553c15e8cf230c3d3f3fa4c4a7a5a46d18027a4d6c7493f3eab56ca97bd906d9')
 
 _architectures='i686-w64-mingw32 x86_64-w64-mingw32'
-
-isStatic && depends+=(${pkgname%-static})
-
-if ! isDefault; then
-  if isStatic; then
-    provides+=('mingw-w64-qt5-base-static')
-    conflicts+=('mingw-w64-qt5-base-static' 'mingw-w64-qt5-base-angle-static' 'mingw-w64-qt5-base-noopengl-static'
-                'mingw-w64-qt5-base-dynamic-static' 'mingw-w64-qt5-base-openql-static')
-  else
-    provides+=('mingw-w64-qt5-base')
-    conflicts+=('mingw-w64-qt5-base' 'mingw-w64-qt5-base-angle' 'mingw-w64-qt5-base-noopengl'
-                'mingw-w64-qt5-base-dynamic' 'mingw-w64-qt5-base-openql')
-  fi
-fi
 
 prepare() {
   cd "${srcdir}/${_pkgfqn}"
@@ -148,37 +116,26 @@ prepare() {
     patch -p1 -i "$patch"
   done
 
-  # make sure the Qt 5 build system uses our external ANGLE library
-  #rm -rf src/3rdparty/angle include/QtANGLE/{EGL,GLES2,GLES3,KHR}
-
   # make sure the Qt 5 build system uses our external PCRE library and zlib
   rm -rf src/3rdparty/{pcre,zlib}
 
-  # build qmake using mingw-w64 {C,LD}FLAGS
-  # This also sets default {C,CXX,LD}FLAGS for projects built using qmake
-  CPPFLAGS="${MINGW_CPPFLAGS:--D_FORTIFY_SOURCE=2}"
-  CFLAGS="${MINGW_CFLAGS:-$CPPFLAGS -O2 -pipe -fno-plt -fexceptions --param=ssp-buffer-size=4}"
-  CXXFLAGS="${MINGW_CXXFLAGS:-$CPPFLAGS -O2 -pipe -fno-plt -fexceptions --param=ssp-buffer-size=4}"
-  LDFLAGS="${MINGW_LDFLAGS:--Wl,-O1,--sort-common,--as-needed}"
+  # clear buildflags ('!buildflags' only effects build() but not prepare())
+  unset CPPFLAGS CFLAGS CXXFLAGS LDFLAGS PKG_CONFIG_PATH
+
+  # build qmake using mingw-w64 {C,CXX,LD}FLAGS
+  # * This also sets default {C,CXX,LD}FLAGS for projects built using qmake.
+  source mingw-env
   sed -i -e "s|^\(QMAKE_CFLAGS_RELEASE.*=\).*$|\1 ${CFLAGS}|" \
          -e "s|^\(QMAKE_CXXFLAGS_RELEASE.*=\).*$|\1 ${CXXFLAGS}|" \
          -e "s|^\(QMAKE_LFLAGS_RELEASE.*=\).*$|\1 ${LDFLAGS}|" \
-    mkspecs/common/gcc-base.conf
+    mkspecs/common/gcc-base.conf \
+    mkspecs/common/g++-win32.conf
   sed -i -e "s|^\(QMAKE_LFLAGS_RELEASE.*=\).*$|\1|" \
     mkspecs/common/g++-unix.conf
 }
 
 build() {
   cd "${srcdir}/${_pkgfqn}"
-
-  # do not set any flags here, flags are configured via mkspec
-  # (Setting flags here is not appropriate as it does not allow to
-  #  distinguish between flags for native compiler and cross compiler.
-  #  See prepare() function.)
-  unset CFLAGS
-  unset CXXFLAGS
-  unset LDFLAGS
-  unset PKG_CONFIG_PATH
 
   for _arch in ${_architectures}; do
     # define general configure arguments
@@ -239,55 +196,34 @@ build() {
       || qt_configure_args+=' -release'
 
     # configure usage of ANGLE/OpenGL
-    if isOpenGL; then
-      msg2 'Using native OpenGL backend'
-      qt_configure_args+=' -opengl desktop'
-    elif isNoOpenGL; then
-      msg2 'Building without OpenGL support'
-      qt_configure_args+=' -no-opengl'
-    elif isANGLE; then
-      # FIXME: This is broken because we needed to invoke fxc.exe (Direct3D Shader Compiler)
-      #        during the build. Maybe start it with WINE?
-      msg2 'Using ANGLE as OpenGL backend'
-      qt_configure_args+=' -angle'
-      # enable declarations of GLES functions
-      # FIXME: Still required?
-      qt_configure_args+=' -DGL_GLEXT_PROTOTYPES'
-    elif isDynamic; then
-      # FIXME: This is broken because is requires enabling the (bundled) ANGLE which is
-      #        broken (see comment under isANGLE).
-      msg2 'Using dynamic OpenGL backend'
-      qt_configure_args+=' -opengl dynamic'
-      qt_configure_args+=' -angle'
-      # enable declarations of GLES functions
-      # FIXME: Still required?
-      qt_configure_args+=' -DGL_GLEXT_PROTOTYPES'
-    fi
+    # FIXME: This is broken because is requires enabling the (bundled) ANGLE which is
+    #        broken because we needed to invoke fxc.exe (Direct3D Shader Compiler)
+    #        during the build. Maybe start it with WINE?
+    msg2 'Using dynamic OpenGL backend'
+    qt_configure_args+=' -opengl dynamic'
+    qt_configure_args+=' -angle'
+    # enable declarations of GLES functions
+    # FIXME: Still required?
+    qt_configure_args+=' -DGL_GLEXT_PROTOTYPES'
 
     # add include directory of MariaDB
     qt_configure_args+=" -I/usr/${_arch}/include/mariadb"
 
+    # add include directory for Vulkan
+    export VULKAN_SDK=/usr/${_arch}
+
     msg2 'Configure and build qmake'
     mkdir -p ../build-${_arch} && pushd ../build-${_arch}
-    if isStatic; then
-      qt_configure_args+=' -static'
+    qt_configure_args+=' -shared'
 
-      # configure static version to use linked OpenSSL
-      qt_configure_args+=' -openssl-linked'
-      export OPENSSL_LIBS="/usr/${_arch}/lib/libssl.a /usr/${_arch}/lib/libcrypto.a -lws2_32 -lgdi32 -lcrypt32 -ldnsapi -liphlpapi"
+    # configure shared version to load OpenSSL dynamically
+    qt_configure_args+=' -openssl-runtime'
 
-    else
-      qt_configure_args+=' -shared'
+    qt_configure_args+=' -device-option CROSS_COMPILE_CUSTOM_CONFIG=actually_a_shared_build'
 
-      # configure shared version to load OpenSSL dynamically
-      qt_configure_args+=' -openssl-runtime'
-
-      qt_configure_args+=' -device-option CROSS_COMPILE_CUSTOM_CONFIG=actually_a_shared_build'
-
-      # override LD_LIBRARY_PATH so libraries for native build tools like libQt5Bootstrap.so are found
-      export LD_LIBRARY_PATH="$PWD/lib"
-      export LDFLAGS="-L$PWD/lib"
-    fi
+    # override LD_LIBRARY_PATH so libraries for native build tools like libQt5Bootstrap.so are found
+    #export LD_LIBRARY_PATH="$PWD/lib"
+    #export LDFLAGS="-L$PWD/lib"
 
     msg2 'Build qmake and configure' && ../${_pkgfqn}/configure $qt_configure_args
     msg2 'Build Qt libraries'        && make
@@ -309,67 +245,21 @@ package() {
     find -iname '*.prl' -exec cp --target-directory "${pkgdir}/usr/${_arch}/lib/qt/plugins" --parents {} +
     popd
 
-    if isStatic; then
-      # The static release contains only the static libs itself but relies on the
-      # shared release for Qt5Bootstrap library and tools (qmake, uic, ...).
+    # remove DLLs from libdir (DLLs are installed in both bindir and libdir, one copy is sufficient)
+    find "${pkgdir}/usr/${_arch}/lib" -maxdepth 1 -name "*.dll" -exec rm {} \;
 
-      # drop Qt5Bootstrap and libraries which are only provided as static lib
-      # and hence already present in shared build (such as Qt5OpenGLExtensions)
-      rm -f \
-        "${pkgdir}/usr/${_arch}/lib/"{lib,}qt5main* \
-        "${pkgdir}/usr/${_arch}/lib/"{lib,}Qt5AccessibilitySupport* \
-        "${pkgdir}/usr/${_arch}/lib/"{lib,}Qt5DeviceDiscoverySupport* \
-        "${pkgdir}/usr/${_arch}/lib/"{lib,}Qt5EdidSupport* \
-        "${pkgdir}/usr/${_arch}/lib/"{lib,}Qt5EventDispatcherSupport* \
-        "${pkgdir}/usr/${_arch}/lib/"{lib,}Qt5FbSupport* \
-        "${pkgdir}/usr/${_arch}/lib/"{lib,}Qt5FontDatabaseSupport* \
-        "${pkgdir}/usr/${_arch}/lib/"{lib,}Qt5PlatformCompositorSupport* \
-        "${pkgdir}/usr/${_arch}/lib/"{lib,}Qt5ThemeSupport* \
-        "${pkgdir}/usr/${_arch}/lib/"{lib,}Qt5OpenGLExtensions* \
-        "${pkgdir}/usr/${_arch}/lib/"{lib,}Qt5PlatformSupport* \
-        "${pkgdir}/usr/${_arch}/lib/"{lib,}Qt5WindowsUIAutomationSupport* \
-        "${pkgdir}/usr/${_arch}/lib/"libQt5Bootstrap* \
+    # install missing libQt5BootstrapDBus.a manually
+    cp --target-directory "${pkgdir}/usr/${_arch}/lib" "$srcdir/build-${_arch}/lib/libQt5BootstrapDBus.a"
 
-      # ensure config files don't conflict with shared version
-      pushd "${pkgdir}/usr/${_arch}/lib/cmake"
-      for cmake_dir in $(find . ! -path . -type d ! -name 'Static*'); do
-        mkdir -p "./Static${cmake_dir:2}";
-        mv "${cmake_dir}/"* "./Static${cmake_dir:2}";
-        rm -r "${cmake_dir}"
-      done
-      rm -r "./StaticQt5OpenGLExtensions"
-      popd
-      rm "${pkgdir}/usr/${_arch}/lib/pkgconfig/StaticQt5OpenGLExtensions.pc"
+    # create symlinks for tools
+    mkdir -p "${pkgdir}/usr/bin"
+    for tool in qmake moc rcc uic qdbuscpp2xml qdbusxml2cpp qdoc syncqt.pl; do
+      ln -s "../${_arch}/lib/qt/bin/${tool}" "${pkgdir}/usr/bin/${_arch}-${tool}-qt5"
+    done
 
-      # create links to static plugins in lib directory
-      pushd "${pkgdir}/usr/${_arch}/lib/" && ln -s "./qt/plugins/"*/*.a . && popd
-
-      # keep a couple pri files not found in base
-      mv "${pkgdir}/usr/${_arch}/lib/qt/mkspecs/modules/qt_plugin_"*.pri "${pkgdir}/usr/${_arch}"
-
-      # fix bad library order for static CMake builds caused by Qt5Gui.static.prl
-      sed -i -e "s|-lfreetype;|-lfreetype;-lharfbuzz;-lfreetype;-lbz2;|" \
-             -e "s| -lz;| |" \
-                "${pkgdir}/usr/${_arch}/lib/Qt5Gui.static.prl"
-
-      # delete duplicate files that are in the base package
-      rm -fR "${pkgdir}/usr/${_arch}/"{include,share}
-      rm -fR "${pkgdir}/usr/${_arch}/lib/"{qt/bin,qt/mkspecs}
-
-      # move pri files back
-      mkdir -p "${pkgdir}/usr/${_arch}/lib/qt/mkspecs/modules"
-      mv "${pkgdir}/usr/${_arch}/"*.pri "${pkgdir}/usr/${_arch}/lib/qt/mkspecs/modules"
-
-    else # shared version
-      # remove DLLs from libdir (DLLs are installed in both bindir and libdir, one copy is sufficient)
-      find "${pkgdir}/usr/${_arch}/lib" -maxdepth 1 -name "*.dll" -exec rm {} \;
-
-      # create symlinks for tools
-      mkdir -p "${pkgdir}/usr/bin"
-      for tool in qmake moc rcc uic qdbuscpp2xml qdbusxml2cpp qdoc syncqt.pl; do
-        ln -s "../${_arch}/lib/qt/bin/${tool}" "${pkgdir}/usr/bin/${_arch}-${tool}-qt5"
-      done
-    fi
+    # create qt.conf containing plugin path, see https://github.com/Martchus/PKGBUILDs/issues/109
+    echo "[Paths]
+Plugins = /usr/${_arch}/lib/qt/plugins" > "${pkgdir}/usr/${_arch}/bin/qt.conf"
 
     # drop QMAKE_PRL_BUILD_DIR because reference the build dir
     find "${pkgdir}/usr/${_arch}/lib" -type f -name '*.prl' -exec sed -i -e '/^QMAKE_PRL_BUILD_DIR/d' {} \;
@@ -384,19 +274,21 @@ package() {
       done
     fi
 
+    # remove '.static.prl' files
+    find "${pkgdir}/usr/${_arch}" -name '.static.prl' -delete
+
     # replace library path in *.prl files so it points to the installed location and not the build directory
     find "${pkgdir}/usr/${_arch}/lib" \( -type f -name '*.prl' -o -name '*.pc' \) -exec sed -i -e "s:${PWD%/*}/build-${_arch}/lib:/usr/${_arch}/lib:g" {} \;
 
     # strip binaries, remove unuseful files
-    if ! isStatic; then
-      strip --strip-all "${pkgdir}/usr/${_arch}/lib/qt/bin/"*[!.pl]
-      strip --strip-unneeded "${pkgdir}/usr/${_arch}/lib/libQt5Bootstrap"{,DBus}.so.${pkgver}
-    fi
-    if isStatic || [[ $NO_EXECUTABLES ]]; then
+    strip --strip-all "${pkgdir}/usr/${_arch}/lib/qt/bin/"*[!.pl]
+    strip --strip-debug "${pkgdir}/usr/${_arch}/lib/libQt5Bootstrap"*.a
+    if [[ $NO_EXECUTABLES ]]; then
       find "${pkgdir}/usr/${_arch}" -name '*.exe' -delete
     else
       find "${pkgdir}/usr/${_arch}" -name '*.exe' -exec ${_arch}-strip --strip-all {} \;
     fi
+
     find "${pkgdir}/usr/${_arch}" \( -name '*.bat' -o -name '*.def' -o -name '*.exp' \) -delete
     find "${pkgdir}/usr/${_arch}" -name '*.dll' -exec ${_arch}-strip --strip-unneeded {} \;
     find "${pkgdir}/usr/${_arch}" \( -name '*.a' -not -name 'libQt5QmlDevTools.a' -not -name 'libQt5Bootstrap.a' \) -exec ${_arch}-strip -g {} \;
