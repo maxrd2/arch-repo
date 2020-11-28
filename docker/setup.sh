@@ -13,10 +13,17 @@ useradd -m -d /home/devel -u 1000 -g users -G tty -s /bin/bash devel
 echo 'devel ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
 
 info "Setting up pacman"
+rm -rf /etc/pacman.d/gnupg
+pacman-key --init
+echo 'keyserver hkp://pool.sks-keyservers.net' >> /etc/pacman.d/gnupg/gpg.conf
+pacman-key --populate archlinux
+pacman -Sy archlinux-keyring pacman --noconfirm --noprogressbar --needed --quiet
+pacman-db-upgrade
+
 pacman -Sy --noconfirm --noprogressbar pacman-contrib
 # select pacman mirrors
 curl -s 'https://www.archlinux.org/mirrorlist/?country=DE&country=CH&country=GB&country=US&protocol=https&ip_version=4&use_mirror_status=on' \
-	| sed 's|^#||;/^#/ d' | rankmirrors -n 6 - >/etc/pacman.d/mirrorlist
+	| sed 's|^#||;/^#/ d' | rankmirrors -n 6 - >>/etc/pacman.d/mirrorlist
 cat >>/etc/pacman.conf <<EOF
 [multilib]
 Include = /etc/pacman.d/mirrorlist
@@ -24,13 +31,9 @@ Include = /etc/pacman.d/mirrorlist
 SigLevel = Optional TrustAll
 Server = https://github.com/maxrd2/arch-repo/releases/download/continuous
 EOF
-pacman-key --init
-pacman-key --populate archlinux
-pacman -Sy archlinux-keyring pacman --noconfirm --noprogressbar --needed --quiet
-pacman-db-upgrade
 
 info "Updating system packages"
-pacman -Su --noconfirm --noprogressbar --needed --quiet \
+pacman -Syu --noconfirm --noprogressbar --needed --quiet \
 	git base-devel python2 wget curl expac yajl vim openssh rsync lzop unzip bash-completion \
 	jq imagemagick icoutils
 
@@ -38,5 +41,5 @@ info "Cleaning up"
 rm -rf \
 	/usr/share/{doc,man}/* \
 	/tmp/* \
-	/var/{tmp,cache/pacman/pkg}/* \
+	/var/{tmp,cache/pacman/pkg,lib/pacman/sync}/* \
 	/home/devel/.cache

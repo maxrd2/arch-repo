@@ -9,9 +9,19 @@ echo "$_ps" >>/etc/skel/.bashrc
 echo -e "$_ps\nexport VISUAL=/usr/bin/vim\nexport PATH="\$HOME/bin:\$PATH"" >>/etc/bash.bashrc
 groupmod -g 100 users
 useradd -m -d /home/devel -u 1000 -g users -G tty -s /bin/bash devel
-echo 'devel ALL=(ALL) NOPASSWD: /usr/bin/pacman, /usr/bin/makepkg' >>/etc/sudoers
+#echo 'devel ALL=(ALL) NOPASSWD: /usr/bin/pacman, /usr/bin/makepkg' >>/etc/sudoers
+echo 'devel ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
 
 info "Setting up pacman"
+rm -rf /etc/pacman.d/gnupg
+pacman-key --init
+echo 'keyserver hkp://pool.sks-keyservers.net' >> /etc/pacman.d/gnupg/gpg.conf
+pacman-key --populate archlinux
+pacman -Sy archlinux-keyring pacman --noconfirm --noprogressbar --needed --quiet
+pacman-db-upgrade
+
+pacman -Sy --noconfirm --noprogressbar pacman-contrib
+# select pacman mirrors
 cat >/etc/pacman.d/mirrorlist <<EOF
 Server = http://192.168.1.5:15678/pacman/\$repo/\$arch
 Server = http://archlinux.iskon.hr/\$repo/os/\$arch
@@ -20,13 +30,9 @@ cat >>/etc/pacman.conf <<EOF
 [multilib]
 Include = /etc/pacman.d/mirrorlist
 EOF
-pacman-key --init
-pacman-key --populate archlinux
-pacman -Sy archlinux-keyring pacman --noconfirm --noprogressbar --needed --quiet
-pacman-db-upgrade
 
 info "Updating system packages"
-pacman -Su --noconfirm --noprogressbar --needed --quiet \
+pacman -Syu --noconfirm --noprogressbar --needed --quiet \
 	git base-devel python2 wget curl expac yajl vim openssh rsync lzop unzip bash-completion \
 	jq imagemagick icoutils
 
