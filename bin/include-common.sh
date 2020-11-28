@@ -23,7 +23,7 @@ gpg-add() {
 repo-pkg-file() {
 	local pkg="$1"
 	local ext="$2"
-	[[ -z "$ext" ]] && ext=".pkg.tar.xz"
+	[[ -z "$ext" ]] && ext=".pkg.tar.zst"
 	[[ -d "$groupdir/$pkg" ]] && pushd "$groupdir/$pkg" >/dev/null || pushd $pkgsdir/*/$pkg >/dev/null
 	local pkgname=() arch=()
 	local $(makepkg --printsrcinfo | grep -E 'pkgver|pkgrel|epoch|pkgname|arch' | perl -pe 's|\s*=\s*|=|g;s|^\s+||;s|\s+| |g;s!(pkgname|arch)=(\S+)!$1+=($2)!g')

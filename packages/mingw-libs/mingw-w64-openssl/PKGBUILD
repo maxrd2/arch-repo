@@ -3,7 +3,7 @@
 # Contributor: ant32 < antreimer at gmail dot com >
 # Contributor: Filip Brcic < brcha at gna dot org >
 
-_pkgver=1.1.1c
+_pkgver=1.1.1h
 _architectures="i686-w64-mingw32 x86_64-w64-mingw32"
 
 pkgname=mingw-w64-openssl
@@ -15,22 +15,24 @@ url="https://www.openssl.org"
 license=('BSD')
 depends=('mingw-w64-zlib')
 makedepends=('mingw-w64-gcc'
+             'mingw-w64-environment'
              'perl')
 options=('!strip' 'staticlibs' '!buildflags')
 source=("https://www.openssl.org/source/openssl-${_pkgver}.tar.gz"{,.asc})
-sha256sums=('f6fb3079ad15076154eda9413fed42877d668e7069d9b87396d0804fdb3f4c90'
+sha256sums=('5c9ca8774bd7b03e5784f26ae9e9e6d749c9da2438545077e6b3d755a06595d9'
             'SKIP')
-validpgpkeys=('7953AC1FBC3DC8B3B292393ED5E9E43F7DF9EE8C') # Richard Levitte <levitte@openssl.org>
+validpgpkeys=('7953AC1FBC3DC8B3B292393ED5E9E43F7DF9EE8C' # Richard Levitte <levitte@openssl.org>
+              '8657ABB260F056B1E5190839D9C4D26D0E604491' # Matt Caswell <matt@openssl.org>
+)
 
 prepare() {
   cd openssl-${_pkgver}
 }
 
 build() {
-  export CFLAGS="-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions --param=ssp-buffer-size=4"
-
   cd "${srcdir}/openssl-${_pkgver}"
   for _arch in ${_architectures}; do
+    source mingw-env ${_arch}
     mkdir -p "${srcdir}/build-${_arch}" && cp -a "${srcdir}/openssl-${_pkgver}/"* "${srcdir}/build-${_arch}" && cd "${srcdir}/build-${_arch}"
     _mingw=mingw
     [ "${_arch}" = 'x86_64-w64-mingw32' ] && _mingw=mingw64

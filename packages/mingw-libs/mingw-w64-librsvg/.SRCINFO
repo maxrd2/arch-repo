@@ -1,6 +1,6 @@
 pkgbase = mingw-w64-librsvg
 	pkgdesc = A SVG viewing library (mingw-w64)
-	pkgver = 2.45.6
+	pkgver = 2.50.1
 	pkgrel = 1
 	url = https://wiki.gnome.org/action/show/Projects/LibRsvg
 	arch = any
@@ -9,20 +9,19 @@ pkgbase = mingw-w64-librsvg
 	makedepends = mingw-w64-rust
 	makedepends = mingw-w64-wine
 	makedepends = gdk-pixbuf2
-	makedepends = intltool
-	makedepends = setconf
+	makedepends = gtk-doc
+	makedepends = gobject-introspection
+	makedepends = git
 	depends = mingw-w64-gdk-pixbuf2
 	depends = mingw-w64-pango
 	depends = mingw-w64-cairo
-	depends = mingw-w64-libcroco
+	depends = mingw-w64-libxml2
 	depends = mingw-w64-freetype2
 	options = !strip
 	options = staticlibs
 	options = !buildflags
-	source = https://download.gnome.org/sources/librsvg/2.45/librsvg-2.45.6.tar.xz
-	source = makefile-fix.patch
-	sha256sums = 0e6e26cb5c79cfa73c0ddab06808ace4d10c4a626b81c31a75ead37c6cb4df41
-	sha256sums = 8fd6d2e4516271d52f6758750421d89fbef68fda3296abd1c87334e76cc09ce9
+	source = git+https://gitlab.gnome.org/GNOME/librsvg.git#commit=1c5e533a8fc5e7211ced07d28151de3956c5dd75
+	sha256sums = SKIP
 
 pkgname = mingw-w64-librsvg
 

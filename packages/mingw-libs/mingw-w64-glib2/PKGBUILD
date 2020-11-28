@@ -4,9 +4,9 @@
 # Contributor: Renato Silva <br.renatosilva@gmail.com>
 # Contributor: Martchus <martchus@gmx.net>
 pkgname=mingw-w64-glib2
-pkgver=2.60.4
+pkgver=2.66.3
 pkgrel=1
-_commit=6672d0cbed1f2bc87ca27ab69290900ff838224e  # tags/2.60.4^0
+_commit=30c06eb5fc5c1d6b992c144ebf8ae540d99b2fd2  # tags/2.66.3^0
 arch=(any)
 pkgdesc="Low level core library (mingw-w64)"
 depends=(mingw-w64-libffi mingw-w64-pcre mingw-w64-gettext mingw-w64-zlib)
@@ -16,10 +16,10 @@ options=(!strip !buildflags staticlibs !emptydirs)
 url="https://wiki.gnome.org/Projects/GLib"
 source=("git+https://gitlab.gnome.org/GNOME/glib.git#commit=$_commit"
   "0001-Use-CreateFile-on-Win32-to-make-sure-g_unlink-always.patch"
-  "0001-win32-Make-the-static-build-work-with-MinGW-when-pos.patch")
+  "glib-prefer-constructors-over-DllMain.patch")
 sha256sums=('SKIP'
-            'ff0d3df5d57cf621cac79f5bea8bd175e6c18b3fbf7cdd02df38c1eab9f40ac3'
-            '838abaeab8ca4978770222ef5f88c4b464545dd591b2d532c698caa875b46931')
+            'f24badc8897bdcf36949f4eef0a0c6e2c26823e8f0400b4dd44a5553f4bdfae0'
+            '3c9848916492435852e4e27bee608a0b2146e146c40f889d725acffd9409aae8')
 
 _architectures="i686-w64-mingw32 x86_64-w64-mingw32"
 
@@ -33,7 +33,7 @@ prepare() {
   # https://gitlab.gnome.org/GNOME/glib/issues/539
   patch -Np1 -i ../0001-Use-CreateFile-on-Win32-to-make-sure-g_unlink-always.patch
   # https://gitlab.gnome.org/GNOME/glib/issues/692
-  patch -Np1 -i ../0001-win32-Make-the-static-build-work-with-MinGW-when-pos.patch
+  patch -Np1 -i ../glib-prefer-constructors-over-DllMain.patch
 }
 
 
@@ -45,7 +45,6 @@ build() {
       --default-library both ..
     ninja
   done
-
 }
 
 package() {
@@ -58,9 +57,9 @@ package() {
     done
     
     DESTDIR="${pkgdir}" ninja -C "${srcdir}/glib/build-${_arch}" install
-    
-    # see https://github.com/mesonbuild/meson/issues/4138
-    ${_arch}-gcc-ranlib ${pkgdir}/usr/${_arch}/lib/*.a
+    if [[ $NO_EXECUTABLES ]]; then
+      find "${pkgdir}/usr/${_arch}" -name '*.exe' -delete
+    fi
 
   done
 }

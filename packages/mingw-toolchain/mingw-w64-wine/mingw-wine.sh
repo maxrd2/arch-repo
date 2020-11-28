@@ -25,4 +25,3 @@ fi
 export WINEDLLOVERRIDES="mscoree,mshtml="
 
 /usr/bin/wine "$@"
-

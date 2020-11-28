@@ -1,0 +1,18 @@
+pkgbase = mingw-w64-brotli
+	pkgdesc = Brotli compression library (mingw-w64)
+	pkgver = 1.0.9
+	pkgrel = 3
+	url = https://github.com/google/brotli
+	arch = any
+	license = MIT
+	makedepends = mingw-w64-cmake
+	makedepends = git
+	depends = mingw-w64-gcc
+	options = !buildflags
+	options = !strip
+	options = staticlibs
+	source = brotli::git+https://github.com/google/brotli#commit=e61745a6b7add50d380cfd7d3883dd6c62fc2c71
+	sha512sums = SKIP
+
+pkgname = mingw-w64-brotli
+

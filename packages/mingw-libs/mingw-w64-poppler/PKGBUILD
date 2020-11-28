@@ -5,7 +5,7 @@
 _architectures="i686-w64-mingw32 x86_64-w64-mingw32"
 
 pkgname=mingw-w64-poppler
-pkgver=0.78.0
+pkgver=20.10.0
 pkgrel=1
 pkgdesc="PDF rendering library based on xpdf 3.0 (mingw-w64)"
 arch=('any')
@@ -22,7 +22,7 @@ makedepends=('mingw-w64-cmake'
              'python')
 options=('!strip' 'staticlibs' '!buildflags')
 source=("https://poppler.freedesktop.org/poppler-${pkgver}.tar.xz")
-sha256sums=('622fdd3187a7339c3b78b861b7cd820ea41ebce0609839ba28ee52c3387938c2')
+sha256sums=('434ecbbb539c1a75955030a1c9b24c7b58200b7f68d2e4269e29acf2f8f13336')
 
 prepare() {
   cd "${srcdir}/poppler-${pkgver}/utils"
@@ -48,7 +48,7 @@ package() {
   for _arch in ${_architectures}; do
     cd "${srcdir}/poppler-${pkgver}/${_arch%%-*}"
     make DESTDIR="${pkgdir}" install
-    find "${pkgdir}/usr/${_arch}" -name '*.exe' -exec ${_arch}-strip {} \;
+    find "${pkgdir}/usr/${_arch}" -name '*.exe' -exec rm {} \;
     find "${pkgdir}/usr/${_arch}" -name '*.dll' -exec ${_arch}-strip --strip-unneeded {} \;
     find "${pkgdir}/usr/${_arch}" -name '*.a' -o -name '*.dll' | xargs ${_arch}-strip -g
   done

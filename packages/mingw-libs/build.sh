@@ -7,7 +7,8 @@ set -e
 sect "Adding GPG keys"
 gpg-add BB5869F064EA74AB 9766E084FB0F43D8 D605848ED7E69871 C1A60EACE707FDA5 \
 	38EE757D69184620 9B432B27D1BA20D7 D5E9E43F7DF9EE8C 5CB4A9347B3B09DC \
-	D81C4887F1679A65 7EE0FC4DCC014E3D 2071B08A33BD3F06
+	D81C4887F1679A65 7EE0FC4DCC014E3D 2071B08A33BD3F06 5F56E5AFA63CCD33 \
+	D9C4D26D0E604491 F3599FF828C67298 8079D18C21AAAAFF 7180713BE58D1ADC
 
 sect "Updating pacman databases"
 [[ ! -L "$repodir/maxrd2.db" ]] && ln -fs "maxrd2.db.tar.gz" "$repodir/maxrd2.db"
@@ -20,6 +21,7 @@ pkg-build mingw-w64-bzip2
 pkg-build mingw-w64-expat
 pkg-build mingw-w64-libffi
 pkg-build mingw-w64-pdcurses
+pkg-build mingw-w64-termcap
 pkg-build mingw-w64-readline
 pkg-build mingw-w64-pcre
 pkg-build mingw-w64-termcap
@@ -59,6 +61,7 @@ pkg-bootstrap mingw-w64-rust-bin
 pkg-build mingw-w64-librsvg
 pkg-build mingw-w64-cairo mingw-w64-cairo-bootstrap
 pkg-build mingw-w64-freetype2 mingw-w64-freetype2-bootstrap
+sudo pacman -Rcsu --noconfirm --noprogressbar wine || true # mingw-w64-gmp compilation fails otherwise
 pkg-build mingw-w64-gmp
 pkg-build mingw-w64-libtasn1
 pkg-build mingw-w64-nettle
@@ -86,10 +89,19 @@ pkg-build mingw-w64-libssh
 pkg-build mingw-w64-sdl2
 pkg-build mingw-w64-xvidcore
 pkg-build mingw-w64-l-smash
-pkg-bootstrap mingw-w64-ffmpeg-bootstrap mingw-w64-ffmpeg
 pkg-build mingw-w64-x264
 pkg-build mingw-w64-x265
-pkg-build mingw-w64-ffmpeg mingw-w64-ffmpeg-bootstrap
+pkg-build mingw-w64-avisynthplus
+pkg-build mingw-w64-vulkan-headers
+pkg-build mingw-w64-vulkan-icd-loader
+pkg-build mingw-w64-dav1d
+pkg-build mingw-w64-rav1e
+pkg-build mingw-w64-srt
+pkg-build mingw-w64-openal
+pkg-build mingw-w64-flac
+pkg-build mingw-w64-wavpack
+pkg-build mingw-w64-mpg123
+pkg-build mingw-w64-ffmpeg
 pkg-remove mingw-w64-rust-bin # it can't create exe... and we needed it for build only... so remove it
 
 # Qt5 / KF5 dependencies
@@ -98,15 +110,14 @@ pkg-build mingw-w64-dbus
 pkg-build mingw-w64-pcre2
 pkg-build mingw-w64-postgresql
 pkg-build mingw-w64-mariadb-connector-c
-pkg-build mingw-w64-vulkan-headers
 pkg-build mingw-w64-aspell
 pkg-build mingw-w64-hunspell
 pkg-build mingw-w64-docbook-wrapper
 pkg-build mingw-w64-libgpg-error
 pkg-build mingw-w64-libgcrypt
 pkg-build mingw-w64-libxslt
-pkg-build mingw-w64-ilmbase
 pkg-build mingw-w64-openexr
+# pkg-build mingw-w64-angleproject
 
 # GStreamer and dependencies
 pkg-build mingw-w64-gstreamer
@@ -115,15 +126,14 @@ pkg-build mingw-w64-libvisual
 pkg-build mingw-w64-gst-plugins-base
 pkg-build mingw-w64-gst-libav
 pkg-build mingw-w64-glib-networking
+pkg-build mingw-w64-brotli
 pkg-build mingw-w64-libsoup
-pkg-build mingw-w64-flac
-pkg-build mingw-w64-wavpack
-pkg-build mingw-w64-mpg123
 pkg-build mingw-w64-gst-plugins-good
 
 # mpv and libmpv
+pkg-build mingw-w64-spirv-headers
 pkg-build mingw-w64-spirv-tools
 pkg-build mingw-w64-glslang
 pkg-build mingw-w64-shaderc
-pkg-build mingw-w64-crossc
+pkg-build mingw-w64-spirv-cross
 pkg-build mingw-w64-mpv
