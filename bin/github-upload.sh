@@ -62,7 +62,7 @@ assets_sync() {
 	
 	# upload new assets
 	local new_assets=()
-	for pathname in "$PWD/.repo/"*.pkg.tar.xz; do
+	for pathname in "$PWD/.repo/"*.pkg.tar.zst; do
 		local basename="$(basename "$pathname")"
 		new_assets+=("$basename")
 		
