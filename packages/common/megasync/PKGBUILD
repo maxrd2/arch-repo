@@ -1,4 +1,4 @@
-# Maintainer: Rafał Kozdrój <kozeid2@gmail.com>
+# Maintainer: Rafał Kozdrój <kozeid2+aur@gmail.com>
 # Contributor: kikadf <kikadf.01@gmail.com>
 # Contributor: Daniel Henry <d at hackr dot pl>
 # Contributor: Miguel Revilla <yo at  miguelrevilla dot com>
@@ -6,28 +6,32 @@
 # Contributor: Hexchain Tong <i at hexchain dot org>
 
 pkgname=megasync
-pkgver=4.2.0
+pkgver=4.3.7.0
 pkgrel=1
 pkgdesc="Easy automated syncing between your computers and your MEGA cloud drive"
 arch=('i686' 'x86_64')
 url="https://github.com/meganz/MEGAsync"
 license=('custom:MEGA LIMITED CODE REVIEW LICENCE')
 depends=('c-ares' 'crypto++' 'libsodium' 'hicolor-icon-theme' 'libuv'
-         'qt5-svg' 'libmediainfo' 'libraw' 'qt5-base' 'ffmpeg')
+         'qt5-svg' 'qt5-x11extras' 'libmediainfo' 'libraw' 'qt5-base'
+         'ffmpeg' 'libpdfium')
 makedepends=('qt5-tools' 'swig' 'doxygen' 'lsb-release' 'git')
-optdepends=('sni-qt: fix systray issue on KDE and LXQt')
-_extname="ArchLinux"
-_sdk_commit="8fa7940db5d4cd6d36f52f340961018a846a8544"
-source=("git+https://github.com/meganz/MEGAsync.git#tag=v${pkgver}_${_extname}"
-        "meganz-sdk::git+https://github.com/meganz/sdk.git#commit=${_sdk_commit}")
+_extname="_Linux"
+source=("git+https://github.com/meganz/MEGAsync.git#tag=v${pkgver}${_extname}"
+        "meganz-sdk::git+https://github.com/meganz/sdk.git"
+        "pdfium.patch")
 sha256sums=('SKIP'
-            'SKIP')
+            'SKIP'
+            '3a03d20165ebfb523644229bd650a2d0e51506c9555a1a9b28c61d07b8f28d7a')
 
 prepare() {
     cd "MEGAsync"
     git submodule init
     git config submodule.src/MEGASync/mega.url "../meganz-sdk"
     git submodule update
+
+    cd "src/MEGASync/mega"
+    patch -Np1 -i "../../../../pdfium.patch"
 }
 
 build() {
@@ -68,7 +72,8 @@ package () {
     install -Dm 644 src/MEGASync/mega/LICENSE "${pkgdir}/usr/share/licenses/megasync/SDK-LICENCE"
     
     cd "src"
-    make INSTALL_ROOT="${pkgdir}" install
+    mkdir -pm 755 "${pkgdir}/usr/bin"
+    make INSTALL_ROOT="${pkgdir}" TARGET="${pkgdir}/usr/bin/megasync" install
 
     install -Dm 755 "MEGASync/megasync" "${pkgdir}/usr/bin/megasync"
 }
