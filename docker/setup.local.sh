@@ -32,7 +32,8 @@ Include = /etc/pacman.d/mirrorlist
 EOF
 
 info "Updating system packages"
-pacman -Syu --noconfirm --noprogressbar --needed --quiet \
+pacman -Syy # force refresh package database
+pacman -Su --noconfirm --noprogressbar --needed --quiet \
 	git base-devel python2 wget curl expac yajl vim openssh rsync lzop unzip bash-completion \
 	jq imagemagick icoutils
 
