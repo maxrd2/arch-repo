@@ -1,6 +1,7 @@
-# Based on ArchLinux image - https://github.com/archlinux/archlinux-docker
+# Based on ArchLinux image - https://gitlab.archlinux.org/archlinux/archlinux-docker/
 # sudo docker build -t maxrd2/arch-build -f Dockerfile .
-FROM archlinux/base:latest
+
+FROM library/archlinux:base
 
 COPY setup.local.sh /opt/maxrd2/
 RUN /opt/maxrd2/setup.local.sh
